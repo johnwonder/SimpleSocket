@@ -15,7 +15,7 @@ namespace SimpleSocket
         static void Main(string[] args)
         {
             SocketServer socketServer = new SocketServer();
-            socketServer.Run(8080);
+            socketServer.Run(8064);
         }
     }
 
@@ -130,7 +130,7 @@ namespace SimpleSocket
         }
 
         /// <summary>
-        /// 
+        /// 广播消息
         /// </summary>
         private void Broadcast()
         {
@@ -147,7 +147,7 @@ namespace SimpleSocket
                                 Socket client = cs.Key;
                                 if (client.Connected)
                                 {
-                                    client.Send(msg, msg.Length, SocketFlags.None);
+                                    client.Send(msg, msg.Length, SocketFlags.None);//发送消息给客户端
                                 }
                             }
                             MsgPool.RemoveAt(0);
@@ -158,6 +158,11 @@ namespace SimpleSocket
             broadcast.Start();
         }
 
+        /// <summary>
+        /// 包装消息发送给客户端
+        /// </summary>
+        /// <param name="sm"></param>
+        /// <returns></returns>
         private byte[] PackageMessage(SocketMessage sm)
         {
             StringBuilder packagedMsg = new StringBuilder();

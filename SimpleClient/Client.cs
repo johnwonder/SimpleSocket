@@ -17,7 +17,7 @@ namespace SimpleClient
             Socket client = new Socket(AddressFamily.InterNetwork, SocketType.Stream,
                 ProtocolType.Tcp);
 
-            client.Connect(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8080));
+            client.Connect(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8064));
             Console.WriteLine("Connected to server,enter $q to quit");
             name = "{<" + name.Trim() +">}";
             byte[] nameBuf = Encoding.UTF8.GetBytes(name);

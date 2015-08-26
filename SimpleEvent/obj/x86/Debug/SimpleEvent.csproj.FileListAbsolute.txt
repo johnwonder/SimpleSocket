@@ -1,0 +1,4 @@
+E:\socketlearn\SimpleSocket\SimpleEvent\bin\Debug\SimpleEvent.exe
+E:\socketlearn\SimpleSocket\SimpleEvent\bin\Debug\SimpleEvent.pdb
+E:\socketlearn\SimpleSocket\SimpleEvent\obj\x86\Debug\SimpleEvent.exe
+E:\socketlearn\SimpleSocket\SimpleEvent\obj\x86\Debug\SimpleEvent.pdb

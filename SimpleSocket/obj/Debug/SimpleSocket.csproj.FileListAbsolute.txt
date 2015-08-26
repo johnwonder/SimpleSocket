@@ -1,0 +1,4 @@
+E:\socketlearn\SimpleSocket\SimpleSocket\bin\Debug\SimpleSocket.exe
+E:\socketlearn\SimpleSocket\SimpleSocket\bin\Debug\SimpleSocket.pdb
+E:\socketlearn\SimpleSocket\SimpleSocket\obj\Debug\SimpleSocket.exe
+E:\socketlearn\SimpleSocket\SimpleSocket\obj\Debug\SimpleSocket.pdb
