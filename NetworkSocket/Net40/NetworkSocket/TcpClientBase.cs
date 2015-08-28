@@ -18,6 +18,7 @@ namespace NetworkSocket
         /// </summary>
         public TcpClientBase()
         {
+            //把当前实例的OnReceive绑定到ReceiveHandler
             base.ReceiveHandler = this.OnReceive;
             base.DisconnectHandler = this.Disconnect;
         }

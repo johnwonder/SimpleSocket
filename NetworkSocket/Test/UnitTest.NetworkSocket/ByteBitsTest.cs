@@ -1,6 +1,7 @@
 ﻿using NetworkSocket;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Text;
 
 namespace UnitTest.NetworkSocket
 {
@@ -76,6 +77,14 @@ namespace UnitTest.NetworkSocket
             bool actual;
             actual = target.Equals(obj);
             Assert.AreEqual(expected, actual);           
+        }
+
+        [TestMethod]
+        public void ByteConvertToInt()
+        {
+            byte[] bytes = Encoding.UTF8.GetBytes("2");//一个字符
+
+            int i = bytes[1];
         }
 
         /// <summary>

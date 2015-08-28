@@ -72,6 +72,27 @@ namespace SimpleServer
 
            // this.TagData = new 
         }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public bool IsConnected
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public void Send(ByteRange byteRange)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Close()
+        {
+            throw new NotImplementedException();
+        }
     }
 
     /// <summary>
@@ -253,7 +274,8 @@ namespace SimpleServer
         /// <returns></returns>
         public static ushort ToUInt16(byte[] bytes, int startIndex, Endians endian)
         {
-            return (ushort)ToInt16(bytes, startIndex, endian);
+            //(ushort)ToInt16(bytes, startIndex, endian);
+            return 2;
         }
 
 
@@ -532,7 +554,7 @@ namespace SimpleServer
         }
     }
 
-    sealed class SessionExtraState
+    public sealed class SessionExtraState
     {
         /// <summary>
         /// 发送字节数

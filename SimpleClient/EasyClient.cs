@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -106,7 +107,7 @@ namespace SimpleClient
                 if(REnd > 0)
                 {
                     byte[] data = new byte[REnd];
-                    data.CopyTo(null,)
+                    //data.CopyTo(null,)
                     Array.Copy(MsgBuffer, 0, data, 0, REnd);
 
                     //在此处可以对data进行按需处理
@@ -138,7 +139,7 @@ namespace SimpleClient
             }
         }
 
-        private HashTable DataTable = new HashTable();
+        private Hashtable DataTable = new Hashtable();
 
         /// <summary>
         /// http://www.cnblogs.com/ysyn/p/3399351.html
