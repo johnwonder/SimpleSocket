@@ -192,7 +192,7 @@ namespace NetworkSocket.Fast
                 return null;
             }
 
-            buffer.Position = 0;
+            buffer.Position = 0;//从0开始
             var totalBytes = buffer.ReadInt32();
             const int packegMaxSize = 10 * 1204 * 1024; // 10M
             if (totalBytes > packegMaxSize)
