@@ -8,11 +8,18 @@ using System.Threading.Tasks;
 
 namespace SimpleServer
 {
-    public class SimpleServer<T>
+    public abstract class SimpleServer<T> : ISimpleServer<T> where T : SimpleSessionBase
     {
         private Socket listenSocket;
 
         private SocketAsyncEventArgs acceptArg = new SocketAsyncEventArgs();
+
+        public IEnumerable<T> AllSessions { get;private set; }
+
+        /// <summary>
+        /// 获取所监听的本地IP和端口
+        /// </summary>
+        public IPEndPoint LocalEndPoint { get; private set; }
         public void StartListen(int port)
         {
 
@@ -93,7 +100,7 @@ namespace SimpleServer
 
         private void InitSession(T session,Socket socket)
         {
-            //session.ReciveHandler =>(buffer) => this.OnReceive(session,buffer);
+             session.ReceiveHandler = (buffer) => this.OnReceive(session,buffer);
             //session.DisconnectHandler =>() => this.RecyceSession(session);
             //session.CloseHandler = () => this.RecyceSession(session);
 
@@ -105,6 +112,19 @@ namespace SimpleServer
             this.OnConnect(session);
             //开始接收数据
             session.TryReceive();
+        }
+
+        /// <summary>
+        /// 关闭和释放所有相关资源
+        /// </summary>
+        public void Dispose()
+        {
+            if (this.IsDisposed == false)
+            {
+                this.Dispose(true);
+                GC.SuppressFinalize(this);
+            }
+            this.IsDisposed = true;
         }
     }
 }

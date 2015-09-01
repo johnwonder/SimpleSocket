@@ -29,6 +29,11 @@ namespace SimpleServer
 
         private ConcurrentQueue<ByteRange> byteRangeQueue = new ConcurrentQueue<ByteRange>();
 
+        /// <summary>
+        /// 用于接受的SocketAsyncEventArgs
+        /// </summary>
+        private SocketAsyncEventArgs recvArg = new SocketAsyncEventArgs();
+        
         private ReceiveBuffer recvBuffer = new ReceiveBuffer();
 
         /// <summary>
@@ -58,7 +63,7 @@ namespace SimpleServer
 
         public SessionExtraState ExtraState { get;private set; }
 
-        public bool IsConnectd
+        public bool IsConnected
         {
             get
             {
@@ -73,16 +78,59 @@ namespace SimpleServer
            // this.TagData = new 
         }
 
+        internal void Bind(Socket socket)
+        {
+            this.socket = socket;
+            this.socketClosed = false;
+            this.recvArg.SocketError = SocketError.Success;
+            this.recvBuffer.Clear();
+
+            this.pendingSendCount = 0;
+            this.sendArg.SocketError = SocketError.Success;
+
+            if(this.byteRangeQueue.Count > 0)
+            {
+                this.byteRangeQueue = new ConcurrentQueue<ByteRange>();
+            }
+
+            this.TagData.Clear();
+            this.ExtraState.SetBinded();
+            this.RemoteEndPoint = (IPEndPoint)socket.RemoteEndPoint;
+            this.SetKeepAlive(socket);
+        }
+
+        private void SetKeepAlive(Socket socket)
+        {
+            var inOptionValue = new byte[12];
+            var outOptionValue = new byte[12];
+
+            ByteConverter.ToBytes(1, Endians.Little).CopyTo(inOptionValue,0);
+            ByteConverter.ToBytes(5 * 1000, Endians.Little).CopyTo(inOptionValue, 4);
+            ByteConverter.ToBytes(5 * 1000, Endians.Little).CopyTo(inOptionValue, 8);
+
+            try
+            {
+                socket.IOControl(IOControlCode.KeepAliveValues,inOptionValue,outOptionValue);
+
+            }
+            catch (NotSupportedException)
+            {
+
+                socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, inOptionValue);
+            }
+            catch(NotImplementedException)
+            {
+                socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive,inOptionValue);
+            }
+            catch(Exception)
+            { }
+        }
+
         public void Dispose()
         {
             throw new NotImplementedException();
         }
 
-
-        public bool IsConnected
-        {
-            get { throw new NotImplementedException(); }
-        }
 
         public void Send(ByteRange byteRange)
         {
@@ -217,8 +265,23 @@ namespace SimpleServer
 
         public short ReadInt16()
         {
-            return 1;
-           // var value = ByteConverter
+            var value = ByteConverter.ToInt16(this._buffer,this.Position,this.Endian);
+            this.Position = this.Position + sizeof(short);
+            return value;
+        }
+
+        public uint ReadUInt16()
+        {
+            var value = ByteConverter.ToUInt16(this._buffer,this.Position,this.Endian);
+            this.Position = this.Position + sizeof(ushort);
+            return value;
+        }
+
+        public int ReadInt32()
+        {
+            var value = ByteConverter.ToInt32(this._buffer,this.Position,this.Endian);
+            this.Position = this.Position +sizeof(int);
+            return value;
         }
 	}
 
@@ -263,6 +326,21 @@ namespace SimpleServer
                }
         }
 
+        public static unsafe short ToInt16(byte[] bytes,int startIndex,Endians endian)
+        {
+            fixed (byte* pbyte = &bytes[startIndex])
+            {
+                if (endian == Endians.Little)
+                {
+                    return (short)((*pbyte) | (*(pbyte + 1) << 8));
+                }
+                else
+                {
+                    return (short)((*pbyte << 8) | (*(pbyte + 1)));
+                }
+            }
+        }
+
         /// <summary>
         /// 返回由字节数组中指定位置的四个字节转换来的16位无符号整数
         /// </summary>
@@ -274,8 +352,7 @@ namespace SimpleServer
         /// <returns></returns>
         public static ushort ToUInt16(byte[] bytes, int startIndex, Endians endian)
         {
-            //(ushort)ToInt16(bytes, startIndex, endian);
-            return 2;
+            return (ushort)ToInt16(bytes, startIndex, endian);
         }
 
 
@@ -417,7 +494,7 @@ namespace SimpleServer
         Little
 	}
 
-    interface ISession
+    public interface ISession
     {
         ITag TagData { get; }
 
@@ -425,7 +502,10 @@ namespace SimpleServer
 
         IPEndPoint RemoteEndPoint { get; }
 
-        bool IsConnected { get; }
+        bool IsConnected
+        {
+            get;
+        }
 
         void Send(ByteRange byteRange);
 
